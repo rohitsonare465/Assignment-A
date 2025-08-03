@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug Spring Boot App",
+            "request": "launch",
+            "mainClass": "com.example.coursesearch.CourseSearchApplication",
+            "projectName": "course-search",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
