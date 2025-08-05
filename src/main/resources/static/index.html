@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Search Application</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .search-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            grid-column: span 2;
+        }
+        .search-btn:hover {
+            background: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .course-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .course-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .course-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .course-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .course-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .pagination button:hover {
+            background: #f0f0f0;
+        }
+        .pagination button.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .stats {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Course Search Application</h1>
+        
+        <div class="search-form">
+            <div class="form-group">
+                <label for="query">Search Courses:</label>
+                <input type="text" id="query" placeholder="Enter course title or description...">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category">
+                    <option value="">All Categories</option>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Art">Art</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Music">Music</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Language Arts">Language Arts</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Logic">Logic</option>
+                    <option value="Language">Language</option>
+                    <option value="Life Skills">Life Skills</option>
+                    <option value="Dance">Dance</option>
+                    <option value="Social Studies">Social Studies</option>
+                    <option value="Entertainment">Entertainment</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="type">Course Type:</label>
+                <select id="type">
+                    <option value="">All Types</option>
+                    <option value="COURSE">Course</option>
+                    <option value="CLUB">Club</option>
+                    <option value="ONE_TIME">One-Time Event</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="gradeRange">Grade Range:</label>
+                <select id="gradeRange">
+                    <option value="">All Grades</option>
+                    <option value="K-2nd">K-2nd</option>
+                    <option value="K-4th">K-4th</option>
+                    <option value="K-5th">K-5th</option>
+                    <option value="K-6th">K-6th</option>
+                    <option value="K-8th">K-8th</option>
+                    <option value="1st-5th">1st-5th</option>
+                    <option value="2nd-6th">2nd-6th</option>
+                    <option value="2nd-8th">2nd-8th</option>
+                    <option value="3rd-6th">3rd-6th</option>
+                    <option value="3rd-7th">3rd-7th</option>
+                    <option value="3rd-8th">3rd-8th</option>
+                    <option value="4th-8th">4th-8th</option>
+                    <option value="4th-10th">4th-10th</option>
+                    <option value="4th-12th">4th-12th</option>
+                    <option value="5th-8th">5th-8th</option>
+                    <option value="5th-10th">5th-10th</option>
+                    <option value="5th-12th">5th-12th</option>
+                    <option value="6th-12th">6th-12th</option>
+                    <option value="7th-12th">7th-12th</option>
+                    <option value="8th-12th">8th-12th</option>
+                    <option value="9th-12th">9th-12th</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="minAge">Min Age:</label>
+                <input type="number" id="minAge" placeholder="5" min="5" max="17">
+            </div>
+            
+            <div class="form-group">
+                <label for="maxAge">Max Age:</label>
+                <input type="number" id="maxAge" placeholder="17" min="5" max="17">
+            </div>
+            
+            <div class="form-group">
+                <label for="minPrice">Min Price:</label>
+                <input type="number" id="minPrice" placeholder="0" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="maxPrice">Max Price:</label>
+                <input type="number" id="maxPrice" placeholder="200" min="0" step="0.01">
+            </div>
+            
+            <button class="search-btn" onclick="searchCourses()">🔍 Search Courses</button>
+        </div>
+        
+        <div class="stats" id="stats"></div>
+        <div class="results" id="results"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const pageSize = 5;
+
+        async function searchCourses(page = 0) {
+            currentPage = page;
+            
+            const query = document.getElementById('query').value;
+            const category = document.getElementById('category').value;
+            const type = document.getElementById('type').value;
+            const gradeRange = document.getElementById('gradeRange').value;
+            const minAge = document.getElementById('minAge').value;
+            const maxAge = document.getElementById('maxAge').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            
+            const params = new URLSearchParams();
+            if (query) params.append('query', query);
+            if (category) params.append('category', category);
+            if (type) params.append('type', type);
+            if (gradeRange) params.append('gradeRange', gradeRange);
+            if (minAge) params.append('minAge', minAge);
+            if (maxAge) params.append('maxAge', maxAge);
+            if (minPrice) params.append('minPrice', minPrice);
+            if (maxPrice) params.append('maxPrice', maxPrice);
+            params.append('page', page);
+            params.append('size', pageSize);
+            params.append('sortBy', 'nextSessionDate');
+            params.append('sortDirection', 'asc');
+            
+            document.getElementById('results').innerHTML = '<div class="loading">🔄 Searching...</div>';
+            
+            try {
+                const response = await fetch(`/api/courses/search?${params}`);
+                const data = await response.json();
+                
+                displayResults(data);
+                displayPagination(data);
+                displayStats(data);
+            } catch (error) {
+                document.getElementById('results').innerHTML = '<div class="loading">❌ Error loading results</div>';
+            }
+        }
+        
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (data.courses && data.courses.length > 0) {
+                resultsDiv.innerHTML = data.courses.map(course => `
+                    <div class="course-card">
+                        <div class="course-title">${course.title}</div>
+                        <div class="course-meta">
+                            <span>👨‍🏫 ${course.instructor}</span>
+                            <span>📚 ${course.category}</span>
+                            <span>📊 ${course.level}</span>
+                            <span>💰 $${course.price}</span>
+                            <span>⭐ ${course.rating}/5</span>
+                            <span>👥 ${course.enrollments} enrolled</span>
+                        </div>
+                        <div class="course-description">${course.description}</div>
+                        <div class="course-tags">
+                            ${course.tags ? course.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                resultsDiv.innerHTML = '<div class="loading">📭 No courses found</div>';
+            }
+        }
+        
+        function displayPagination(data) {
+            const paginationDiv = document.getElementById('pagination');
+            
+            if (data.totalPages <= 1) {
+                paginationDiv.innerHTML = '';
+                return;
+            }
+            
+            let pagination = '';
+            
+            if (data.hasPrevious) {
+                pagination += `<button onclick="searchCourses(${currentPage - 1})">‹ Previous</button>`;
+            }
+            
+            for (let i = 0; i < data.totalPages; i++) {
+                const active = i === currentPage ? 'active' : '';
+                pagination += `<button class="${active}" onclick="searchCourses(${i})">${i + 1}</button>`;
+            }
+            
+            if (data.hasNext) {
+                pagination += `<button onclick="searchCourses(${currentPage + 1})">Next ›</button>`;
+            }
+            
+            paginationDiv.innerHTML = pagination;
+        }
+        
+        function displayStats(data) {
+            const statsDiv = document.getElementById('stats');
+            if (data.totalElements !== undefined) {
+                statsDiv.innerHTML = `Found ${data.totalElements} courses`;
+            }
+        }
+        
+        // Load initial results
+        searchCourses();
+        
+        // Add enter key support
+        document.getElementById('query').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCourses();
+            }
+        });
+    </script>
+</body>
+</html>
