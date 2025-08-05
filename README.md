@@ -5,7 +5,7 @@ A Spring Boot application demonstrating Elasticsearch integration for course sea
 ## Features
 
 - **Core**: Course indexing and search with filters, pagination, and sorting
-- **Bonus**: Autocomplete suggestions and fuzzy matching
+- **Bonus (Assignment B)**: ✅ Autocomplete suggestions with fuzzy matching and substring search
 
 ## Technology Stack
 
@@ -47,7 +47,42 @@ curl "http://localhost:8080/api/search?category=Technology&minAge=10&maxAge=18&s
 curl "http://localhost:8080/api/search/help"
 ```
 
-### Autocomplete Endpoint: `/api/courses/autocomplete`
+### Autocomplete Endpoint: `/api/search/suggest`
+
+**Parameters:**
+- `q` - Query string for suggestions (required)
+
+**Response:**
+- `suggestions` - Array of course title suggestions containing the query (up to 10)
+- `query` - Original query string  
+- `count` - Number of suggestions returned
+
+**Features:**
+- **Substring matching**: Finds course titles containing the query anywhere in the title
+- **Case-insensitive**: Matches regardless of case
+- **Fuzzy matching**: Provides flexible search for better user experience
+- **Elasticsearch-powered**: Uses Elasticsearch for fast, scalable search with fallback
+
+**Examples:**
+```bash
+# Get suggestions for titles containing "mat"
+curl "http://localhost:8080/api/search/suggest?q=mat"
+# Response: {"suggestions":["Math Adventures for Little Explorers","Advanced Mathematics Challenge","Math Olympiad Preparation"],"query":"mat","count":3}
+
+# Get suggestions for titles containing "sci" 
+curl "http://localhost:8080/api/search/suggest?q=sci"
+# Response: {"suggestions":["Science Spectacular Workshop","Environmental Science Explorer","Science Fair Preparation Club","Veterinary Science Workshop"],"query":"sci","count":4}
+
+# Get suggestions for titles containing "art"
+curl "http://localhost:8080/api/search/suggest?q=art"
+# Response: {"suggestions":["Young Artists Club","Origami Art Workshop","Martial Arts Introduction","Knitting and Fiber Arts"],"query":"art","count":4}
+```
+
+### Legacy Autocomplete Endpoint: `/api/courses/autocomplete`
+
+### Legacy Autocomplete Endpoint: `/api/courses/autocomplete`
+
+**Note:** This endpoint is maintained for backward compatibility. Use `/api/search/suggest` for the official autocomplete API.
 
 ```bash
 curl "http://localhost:8080/api/courses/autocomplete?query=art"

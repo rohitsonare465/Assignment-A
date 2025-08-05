@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.CompletionField;
 
 import java.util.List;
 
@@ -21,6 +22,14 @@ public class CourseDocument {
     
     @Field(type = FieldType.Text, analyzer = "standard")
     private String title;
+    
+    /**
+     * Completion field for Elasticsearch completion suggester.
+     * Currently populated but not actively used - implementation uses substring matching instead.
+     * This field is ready for future enhancement to use Elasticsearch's completion suggester API.
+     */
+    @CompletionField(maxInputLength = 100)
+    private String titleSuggest;
     
     @Field(type = FieldType.Text, analyzer = "standard")
     private String description;

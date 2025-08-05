@@ -185,11 +185,12 @@ public class CourseService {
             return List.of();
         }
         
-        // Use Elasticsearch query for better performance with large datasets
+        // Use a simple prefix search on the title field for autocomplete
+        // In a real production system, you could implement Elasticsearch completion suggester
         try {
-            Criteria titleCriteria = new Criteria("title").contains(query.toLowerCase());
+            Criteria titleCriteria = new Criteria("title").contains(query);
             CriteriaQuery searchQuery = new CriteriaQuery(titleCriteria);
-            searchQuery.setPageable(PageRequest.of(0, 10)); // Limit to 10 for autocomplete
+            searchQuery.setPageable(PageRequest.of(0, 10));
             
             SearchHits<CourseDocument> searchHits = elasticsearchOperations.search(searchQuery, CourseDocument.class);
             
@@ -197,19 +198,19 @@ public class CourseService {
                 .map(hit -> hit.getContent().getTitle())
                 .filter(title -> title != null)
                 .distinct()
-                .limit(5) // Limit to 5 suggestions
+                .limit(10)
                 .collect(Collectors.toList());
         } catch (Exception e) {
-            log.warn("Error getting autocomplete suggestions, falling back to basic search: {}", e.getMessage());
+            log.warn("Elasticsearch search failed, using fallback: {}", e.getMessage());
             
-            // Fallback to basic search if Elasticsearch query fails
+            // Fallback to simple in-memory filtering
             List<CourseDocument> allCourses = getAllCourses();
             
             return allCourses.stream()
                 .map(CourseDocument::getTitle)
                 .filter(title -> title != null && title.toLowerCase().contains(query.toLowerCase()))
                 .distinct()
-                .limit(5) // Limit to 5 suggestions
+                .limit(10)
                 .collect(Collectors.toList());
         }
     }

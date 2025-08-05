@@ -37,6 +37,13 @@ public class DataInitializer implements CommandLineRunner {
                     new TypeReference<List<CourseDocument>>() {}
             );
             
+            // Set the titleSuggest field for autocomplete
+            courses.forEach(course -> {
+                if (course.getTitle() != null) {
+                    course.setTitleSuggest(course.getTitle());
+                }
+            });
+            
             courseService.saveAllCourses(courses);
             log.info("Successfully loaded {} sample courses", courses.size());
             

@@ -177,9 +177,52 @@ public class SearchController {
         examples.put("Age and price range", "/api/search?minAge=10&maxAge=15&minPrice=50&maxPrice=100");
         examples.put("Pagination", "/api/search?page=1&size=5");
         examples.put("Combined filters", "/api/search?q=art&type=CLUB&sort=upcoming&page=0&size=10");
+        examples.put("Autocomplete suggestions", "/api/search/suggest?q=mat");
         
         help.put("examples", examples);
         
+        // Add autocomplete endpoint documentation
+        Map<String, Object> suggestEndpoint = new HashMap<>();
+        suggestEndpoint.put("endpoint", "/api/search/suggest");
+        suggestEndpoint.put("method", "GET");
+        suggestEndpoint.put("description", "Get autocomplete suggestions for course titles");
+        
+        Map<String, String> suggestParams = new HashMap<>();
+        suggestParams.put("q", "Query string for suggestions (required)");
+        suggestEndpoint.put("parameters", suggestParams);
+        
+        Map<String, String> suggestResponse = new HashMap<>();
+        suggestResponse.put("suggestions", "Array of course title suggestions");
+        suggestResponse.put("query", "Original query string");
+        suggestResponse.put("count", "Number of suggestions returned");
+        suggestEndpoint.put("response", suggestResponse);
+        
+        help.put("suggestEndpoint", suggestEndpoint);
+        
         return ResponseEntity.ok(help);
+    }
+    
+    @GetMapping("/search/suggest")
+    public ResponseEntity<Map<String, Object>> getSuggestions(
+            @RequestParam(value = "q", required = true) String query) {
+        
+        log.info("Received suggest request for query: {}", query);
+        
+        if (query == null || query.trim().isEmpty()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("suggestions", List.of());
+            result.put("query", query);
+            return ResponseEntity.ok(result);
+        }
+        
+        List<String> suggestions = courseService.getAutocompleteSuggestions(query.trim());
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("suggestions", suggestions);
+        result.put("query", query);
+        result.put("count", suggestions.size());
+        
+        log.info("Returning {} suggestions for query: {}", suggestions.size(), query);
+        return ResponseEntity.ok(result);
     }
 }

@@ -121,6 +121,10 @@ class CourseServiceTest {
             createTestCourse("4", "Martial Arts Training", "Sports", 120.0)
         );
 
+        // Mock Elasticsearch search to fail/throw exception so it falls back to repository
+        when(elasticsearchOperations.search(any(CriteriaQuery.class), eq(CourseDocument.class)))
+            .thenThrow(new RuntimeException("Elasticsearch not available"));
+        
         when(courseRepository.findAll()).thenReturn(allCourses);
 
         // When
