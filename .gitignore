@@ -47,6 +47,23 @@ Thumbs.db
 
 # Spring Boot
 *.pid
+application-local.properties
+application-dev.properties
+
+# Development files
+*.log
+nohup.out
+*.swp
+*.swo
+*~
+
+# Elasticsearch data
+data/
+logs/
+
+# Temporary files
+tmp/
+temp/
 
 # Elasticsearch data
 data/

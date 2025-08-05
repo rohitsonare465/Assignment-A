@@ -1,26 +1,33 @@
 # Course Search Application
 
-A Spring Boot application demonstrating Elasticsearch integration for course search functionality.
+A Spring Boot application with Elasticsearch integration for searching educational courses.
 
-## Features
+## What it does
 
-- **Core**: Course indexing and search with filters, pagination, and sorting
-- **Bonus (Assignment B)**: ✅ Autocomplete suggestions and fuzzy search with typo tolerance
+- Search courses by title, description, category, age range, price, etc.
+- Autocomplete suggestions as you type
+- Fuzzy search that handles typos (pretty cool!)
+- REST API with filters, sorting, and pagination
 
-## Technology Stack
+## Tech Stack
 
-- **Java 17** | **Spring Boot 3.2.0** | **Spring Data Elasticsearch** | **Maven** | **Docker**
+**Java 17** | **Spring Boot 3.2** | **Elasticsearch** | **Maven** | **Docker**
 
-## 🚀 Quick Start
+## Getting Started
 
-1. **Start services**: `docker compose up -d`
-2. **Run application**: `./mvnw spring-boot:run`
-3. **Verify**: Check logs for "Successfully loaded 50 sample courses"
-4. **Test**: `curl "http://localhost:8080/api/search?category=Science"`
+Make sure you have Docker and Java 17+ installed.
 
-## 📚 API Documentation
+1. **Start Elasticsearch**: `docker compose up -d`
+2. **Run the app**: `./mvnw spring-boot:run`
+3. **Check it works**: `curl "http://localhost:8080/api/search?category=Science"`
 
-### Main Search Endpoint: `/api/search`
+The app loads 51 sample courses on startup. Check the logs to make sure everything loaded properly.
+
+## API Reference
+
+### Search: `/api/search`
+
+Basic course search with various filters.
 
 **Parameters:**
 - `q` - Search keyword (title/description) with **fuzzy matching** for typos
@@ -90,32 +97,30 @@ curl "http://localhost:8080/api/search/suggest?q=art"
 
 ### Legacy Autocomplete Endpoint: `/api/courses/autocomplete`
 
-### Legacy Autocomplete Endpoint: `/api/courses/autocomplete`
-
 **Note:** This endpoint is maintained for backward compatibility. Use `/api/search/suggest` for the official autocomplete API.
 
 ```bash
 curl "http://localhost:8080/api/courses/autocomplete?query=art"
 ```
 
-## 🧪 Testing
+## Testing
 
-### Run Tests
+Run all tests:
 ```bash
-# All tests (unit + integration)
 ./mvnw test
+```
 
-# Integration tests only (requires Docker)
-./mvnw test -Dtest=CourseSearchIntegrationTest
+Quick API test:
+```bash
+./quick-test.sh
+```
 
-# Automated API testing
-chmod +x test-api.sh && ./test-api.sh
-
-# Test autocomplete functionality
-chmod +x test-autocomplete.sh && ./test-autocomplete.sh
-
-# Test fuzzy search with typos
-chmod +x test-fuzzy-search.sh && ./test-fuzzy-search.sh
+More comprehensive testing:
+```bash
+# Test different functionality
+./test-api.sh
+./test-autocomplete.sh  
+./test-fuzzy-search.sh
 ```
 
 ### Expected Data
@@ -124,11 +129,13 @@ chmod +x test-fuzzy-search.sh && ./test-fuzzy-search.sh
 - **Types**: COURSE (31), CLUB (10), ONE_TIME (10)
 - **Price range**: $15 - $180
 
-## 🔧 Configuration
+## Configuration
 
-**Elasticsearch**: `localhost:9200` (via Docker Compose)
-**Application**: `localhost:8080`
-**Sample Data**: Auto-loaded from `src/main/resources/sample-courses.json`
+- **Elasticsearch**: localhost:9200 
+- **Application**: localhost:8080
+- **Sample data**: Loaded automatically from JSON file
+
+For different environments, copy `application.properties` to `application-{env}.properties`.
 
 ## 📁 Project Structure
 
@@ -142,20 +149,17 @@ src/main/java/com/example/coursesearch/
 └── config/         # Elasticsearch config
 ```
 
-## 🏃‍♂️ Development
+## Development
 
 ```bash
 # Build
-./mvnw clean compile
+./mvnw compile
 
-# Run with live reload
+# Run 
 ./mvnw spring-boot:run
 
-# Package
+# Package for deployment
 ./mvnw package
-
-# Run tests
-./mvnw test
 ```
 
 ### 🔍 Fuzzy Search Capabilities

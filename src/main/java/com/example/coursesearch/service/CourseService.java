@@ -29,6 +29,8 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final ElasticsearchOperations elasticsearchOperations;
 
+    // TODO: Consider adding caching here for frequently searched terms
+
     public CourseSearchResponse searchCourses(CourseSearchRequest request) {
         log.info("Searching courses with request: {}", request);
 
