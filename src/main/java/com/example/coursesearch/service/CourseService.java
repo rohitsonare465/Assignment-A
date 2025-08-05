@@ -89,10 +89,19 @@ public class CourseService {
     private CriteriaQuery buildSearchQuery(CourseSearchRequest request) {
         List<Criteria> criteriaList = new ArrayList<>();
 
-        // Full-text search on title and description (multi-match equivalent)
+        // Full-text search on title and description with fuzzy matching for typos
         if (request.getQuery() != null && !request.getQuery().trim().isEmpty()) {
-            Criteria textSearch = new Criteria("title").contains(request.getQuery())
-                    .or(new Criteria("description").contains(request.getQuery()));
+            String query = request.getQuery().trim();
+            
+            // First try exact matches (contains)
+            Criteria exactSearch = new Criteria("title").contains(query)
+                    .or(new Criteria("description").contains(query));
+            
+            // Add fuzzy matching for titles with small typos
+            Criteria fuzzyTitle = new Criteria("title").fuzzy(query);
+            
+            // Combine exact and fuzzy searches
+            Criteria textSearch = exactSearch.or(fuzzyTitle);
             criteriaList.add(textSearch);
         }
 

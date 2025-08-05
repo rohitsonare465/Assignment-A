@@ -5,7 +5,7 @@ A Spring Boot application demonstrating Elasticsearch integration for course sea
 ## Features
 
 - **Core**: Course indexing and search with filters, pagination, and sorting
-- **Bonus (Assignment B)**: ✅ Autocomplete suggestions with fuzzy matching and substring search
+- **Bonus (Assignment B)**: ✅ Autocomplete suggestions and fuzzy search with typo tolerance
 
 ## Technology Stack
 
@@ -23,7 +23,7 @@ A Spring Boot application demonstrating Elasticsearch integration for course sea
 ### Main Search Endpoint: `/api/search`
 
 **Parameters:**
-- `q` - Search keyword (title/description)
+- `q` - Search keyword (title/description) with **fuzzy matching** for typos
 - `category` - Course category filter
 - `type` - Course type (`ONE_TIME`, `COURSE`, `CLUB`)
 - `minAge`, `maxAge` - Age range filters
@@ -31,6 +31,11 @@ A Spring Boot application demonstrating Elasticsearch integration for course sea
 - `startDate` - Courses starting after date (ISO-8601)
 - `sort` - Sort order (`upcoming`, `priceAsc`, `priceDesc`)
 - `page`, `size` - Pagination (default: page=0, size=10)
+
+**Fuzzy Search Features:**
+- **Typo tolerance**: Handles single character errors (insertions, deletions, substitutions)
+- **Smart matching**: Combines exact matches with fuzzy matching for best results
+- **Elasticsearch-powered**: Fast, scalable fuzzy search with automatic scoring
 
 **Example Requests:**
 ```bash
@@ -42,6 +47,11 @@ curl "http://localhost:8080/api/search?category=Science&sort=priceAsc"
 
 # Complex filter
 curl "http://localhost:8080/api/search?category=Technology&minAge=10&maxAge=18&sort=priceAsc"
+
+# Fuzzy search with typos - handles common typing errors
+curl "http://localhost:8080/api/search?q=dinasaur"     # finds "Dinosaur Discovery Day"
+curl "http://localhost:8080/api/search?q=mathamatics" # finds "Advanced Mathematics Challenge"
+curl "http://localhost:8080/api/search?q=scince"      # finds science courses
 
 # API documentation
 curl "http://localhost:8080/api/search/help"
@@ -100,6 +110,12 @@ curl "http://localhost:8080/api/courses/autocomplete?query=art"
 
 # Automated API testing
 chmod +x test-api.sh && ./test-api.sh
+
+# Test autocomplete functionality
+chmod +x test-autocomplete.sh && ./test-autocomplete.sh
+
+# Test fuzzy search with typos
+chmod +x test-fuzzy-search.sh && ./test-fuzzy-search.sh
 ```
 
 ### Expected Data
@@ -141,3 +157,30 @@ src/main/java/com/example/coursesearch/
 # Run tests
 ./mvnw test
 ```
+
+### 🔍 Fuzzy Search Capabilities
+
+The search endpoint includes intelligent fuzzy matching to handle common typing errors and improve search experience:
+
+**Supported Error Types:**
+- **Character substitution**: `dinasaur` → `dinosaur`
+- **Character deletion**: `scince` → `science` 
+- **Character insertion**: `mathamatics` → `mathematics`
+- **Character transposition**: `dinosuar` → `dinosaur`
+
+**Fuzzy Search Examples:**
+```bash
+# Typo examples that work with fuzzy search
+curl "http://localhost:8080/api/search?q=dinasaur"     # Missing 'o' → finds "Dinosaur Discovery Day"
+curl "http://localhost:8080/api/search?q=dinosour"     # Wrong vowel → finds "Dinosaur Discovery Day"  
+curl "http://localhost:8080/api/search?q=mathamatics"  # Wrong vowel → finds "Advanced Mathematics Challenge"
+curl "http://localhost:8080/api/search?q=scince"       # Missing 'e' → finds all science courses
+curl "http://localhost:8080/api/search?q=sience"       # Missing 'c' → finds all science courses
+```
+
+**How it works:**
+1. **Exact matching** is tried first for performance
+2. **Fuzzy matching** is applied for typo tolerance  
+3. Results are automatically ranked by relevance
+4. Single-character errors are typically handled well
+5. Very short queries or heavily misspelled words may not match
